@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <properties resource="db.properties"/>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+
+
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+    <typeAliases>
+        <package name="page.bingx.study2bean"/>
+    </typeAliases>
+
+    <environments default="development">
+
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+
+            <dataSource type="POOLED">
+                <property name="driver" value="${mysql.driver}"/>
+                <property name="url" value="${mysql.url}"/>
+                <property name="username" value="${mysql.username}"/>
+                <property name="password" value="${mysql.password}"/>
+            </dataSource>
+        </environment>
+
+    </environments>
+
+<!--    <mappers>-->
+<!--        <mapper resource="mapper/userMapper.xml"/>-->
+<!--        <mapper resource="mapper/orderMapper.xml"/>-->
+<!--        <mapper resource="mapper/orderItemMapper.xml"/>-->
+<!--&lt;!&ndash;       这里不能写这个会同时导入两次会冲突 <package name="page.bingx.study2bean.dao"/>&ndash;&gt;-->
+<!--    </mappers>-->
+
+</configuration>

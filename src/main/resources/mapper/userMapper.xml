@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--命令空间，需要绑定对应的dao接口的路径-->
+<!--resultMap type -> 返回的java对象 下面的 id/result/collection 标签对应的属性-->
+<!--id -> 主键映射  column数据库字段  property对应java对象的属性-->
+<!--result -> 普通字段映射  column数据库字段  property对应java对象的属性-->
+<!--collection -> 一对多映射  property属性对应User对象(总的type的对象)的orderList属性（一个列表）-->
+<!--        ofType -> 这个列表存的每一个对象的类型-->
+<!--下面的id和result组装的是 Order对象的属性内容-->
+<!--<id> (主键映射) —— 必须排第一-->
+
+<!--    <result> (普通字段) —— 必须排第二-->
+
+<!--        <association> (一对一) —— 排第三-->
+
+<!--            <collection> (一对多) —— 排第四-->
+
+<mapper namespace="page.bingx.study2bean.dao.UserDao">
+
+    <sql id="BaseUserColumns">
+        username, password_hash, balance
+    </sql>
+
+    <resultMap id="UserLazyMap" type="page.bingx.study2bean.pojo.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="balance" property="balance"/>
+        <collection property="orderList"
+                    select="page.bingx.study2bean.dao.OrderDao.selectOrderByUserId" column="id">
+        </collection>
+    </resultMap>
+
+    <resultMap id="UserWithOrdersMap" type="page.bingx.study2bean.pojo.User">
+        <id column="uid" property="id"/>
+        <result column="username" property="username"/>
+        <result column="balance" property="balance"/>
+        <collection property="orderList" ofType="page.bingx.study2bean.pojo.Order">
+            <id column="oid" property="id"/>
+            <result column="order_no" property="orderNumber"/>
+            <result column="total_amount" property="amount"/>
+            <collection property="orderItemList" ofType="page.bingx.study2bean.pojo.OrderItem">
+                <id column="pid" property="id"/>
+                <result column="quantity" property="quantity"/>
+                <association property="product" javaType="page.bingx.study2bean.pojo.Product">
+                    <result column="product_name" property="productName"/>
+                    <result column="price" property="price"/>
+                </association>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <resultMap id="UserMap" type="page.bingx.study2bean.pojo.User">
+        <id column="id" property="id"/>
+        <result column="password_hash" property="password"/>
+        <result column="balance" property="balance"/>
+    </resultMap>
+<select id="findByName" parameterType="String" resultMap="UserMap">
+    SELECT
+        <include refid="BaseUserColumns"></include>
+    FROM users
+    WHERE username = #{username}
+</select>
+
+<insert id="save" parameterType="page.bingx.study2bean.pojo.User">
+    INSERT INTO users (username, password_hash, balance)
+    VALUES (#{username}, #{password}, #{balance})
+</insert>
+
+<delete id="deleteByName" parameterType="String">
+    DELETE FROM users
+    WHERE username = #{username}
+</delete>
+
+<update id="update" parameterType="page.bingx.study2bean.pojo.User">
+    UPDATE users
+    <set>
+        password_hash = #{password}, balance = #{balance}
+    </set>
+        WHERE username = #{username}
+</update>
+
+<select id="findUserWithOrders" resultMap="UserLazyMap">
+    SELECT
+        *
+    FROM users
+    WHERE id = #{id}
+</select>
+
+
+<!--<select id="findUserWithOrdersAndProduct" resultMap="UserWithOrdersMap">-->
+<!--    SELECT-->
+<!--        u.id as uid,-->
+<!--        u.username,-->
+<!--        u.balance,-->
+<!--        o.id as oid,-->
+<!--        o.order_no,-->
+<!--        o.total_amount,-->
+<!--        p.id as pid,-->
+<!--    p.product_name,p.price,-->
+<!--    oi.quantity-->
+<!--    FROM users u-->
+<!--    LEFT JOIN orders o ON u.id = o.user_id-->
+
+<!--    LEFT JOIN order_item oi ON o.id = oi.order_id-->
+<!--    LEFT JOIN product p ON oi.product_id = p.id-->
+<!--    WHERE u.id = #{id}-->
+<!--</select>-->
+
+</mapper>

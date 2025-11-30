@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+<!--  自动扫描包，把@commpoent,@Service ,@Repository @Controller 这些加载为bean对象-->
+    <context:component-scan base-package="page.bingx.study2bean.controller"/>
+<!--    开启mvc对注解的支持，可以识别各种注解 ,比如可以把java对象转换成json的@ResponseBody-->
+    <mvc:annotation-driven/>
+<!-- 拦截所有请求，如果一些图片/页面无法在controller设定的路径找到，就会去webapp下寻找对应的资源
+就去找默认的servlet去处理，比如静态资源等-->
+<!--     这样配置后，静态资源就不会被DispatcherServlet拦截，从而可以被正确访问到-->
+<!--     例如，访问 /images/logo.png 时，如果 DispatcherServlet 没有处理该请求，-->
+<!--     则会将请求转发给默认的 Servlet 来处理，从而正确返回图片资源-->
+<!--     这样可以避免静态资源请求被错误地路由到 Spring MVC 控制器中-->
+<!--     这对于提供静态内容（如图片、CSS 文件、JavaScript 文件等）非常有用-->
+    <mvc:default-servlet-handler/>
+
+</beans>

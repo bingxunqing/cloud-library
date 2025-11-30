@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--命令空间，需要绑定对应的dao接口的路径-->
+<!--resultMap type -> 返回的java对象 下面的 id/result/collection 标签对应的属性-->
+<!--id -> 主键映射  column数据库字段  property对应java对象的属性-->
+<!--result -> 普通字段映射  column数据库字段  property对应java对象的属性-->
+<!--collection -> 一对多映射  property属性对应User对象(总的type的对象)的orderList属性（一个列表）-->
+<!--        ofType -> 这个列表存的每一个对象的类型-->
+<!--下面的id和result组装的是 Order对象的属性内容-->
+<mapper namespace="page.bingx.study2bean.dao.OrderDao">
+
+    <resultMap id="OrderSearchMap" type="page.bingx.study2bean.pojo.Order">
+        <id column="oid" property="id"/>
+        <result column="order_no" property="orderNumber"/>
+        <result column="total_amount" property="amount"/>
+        <result column="user_id" property="userId"/>
+        <collection property="orderItemList" ofType="page.bingx.study2bean.pojo.OrderItem">
+            <id column="pid" property="id"/>
+            <result column="quantity" property="quantity"/>
+            <association property="product" javaType="page.bingx.study2bean.pojo.Product">
+                <result column="product_name" property="productName"/>
+                <result column="price" property="price"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <resultMap id="OrderMapWithOrderItem" type="page.bingx.study2bean.pojo.Order">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNumber"/>
+        <result column="total_amount" property="amount"/>
+        <result column="user_id" property="userId"/>
+        <collection property="orderItemList"
+                    select="page.bingx.study2bean.dao.OrderItemDao.findOrderItemById"
+                    column="id">
+        </collection>
+    </resultMap>
+    
+    <select id="selectOrderByUserId" resultMap="OrderMapWithOrderItem" parameterType="int">
+        SELECT * FROM orders WHERE user_id = #{userId}
+    </select>
+    
+    <insert id="InsertOrder" parameterType="page.bingx.study2bean.pojo.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO orders (order_no, total_amount, user_id)
+        VALUES ( #{orderNumber}, #{amount}, #{userId})
+    </insert>
+
+    <insert id="InsertOrderItem" parameterType="page.bingx.study2bean.pojo.OrderItem">
+        INSERT INTO order_item (order_id, product_id, quantity)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+    ( #{item.orderId}, #{item.productId}, #{item.quantity})
+</foreach>
+
+    </insert>
+
+    <select id="searchOrder" parameterType="page.bingx.study2bean.pojo.OrderSearch" resultMap="OrderSearchMap">
+        SELECT o.id as oid, o.order_no, o.total_amount,o.user_id,
+               oi.id as pid, oi.quantity,
+               p.product_name, p.price
+        FROM orders o
+        JOIN order_item oi ON o.id = oi.order_id
+        JOIN product p ON oi.product_id = p.id
+        <where>
+            <if test="id != null">
+                AND o.id = #{id}
+            </if>
+            <if test="minAmount != null">
+                AND o.total_amount &gt;= #{minAmount}
+            </if>
+        <if test="maxAmount != null">
+                AND o.total_amount &lt;= #{maxAmount}
+            </if>
+            <if test="orderNumberKeyword != null and orderNumberKeyword != ''">
+                <bind name="pattern" value="'%'+orderNumberKeyword+'%'"/>
+                AND o.order_no LIKE #{pattern}
+            </if>
+        <if test="userId != null">
+                AND o.user_id = #{userId}
+            </if>
+        </where>
+    </select>
+</mapper>
