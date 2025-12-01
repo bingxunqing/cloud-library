@@ -11,7 +11,8 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
         <setting name="logImpl" value="STDOUT_LOGGING"/>
 
-
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
         <setting name="lazyLoadingEnabled" value="true"/>
         <setting name="aggressiveLazyLoading" value="false"/>
     </settings>
@@ -41,5 +42,7 @@
 <!--        <mapper resource="mapper/orderItemMapper.xml"/>-->
 <!--&lt;!&ndash;       这里不能写这个会同时导入两次会冲突 <package name="page.bingx.study2bean.dao"/>&ndash;&gt;-->
 <!--    </mappers>-->
-
+<!--<mappers>-->
+<!--    <mapper resource="mapper/UserMapper.xml"/>-->
+<!--</mappers>-->
 </configuration>

@@ -12,6 +12,7 @@ public enum ResultCode {
     NOT_FOUND(404, "未找到"),
     UNAUTHORIZED(401, "未授权"),
     FORBIDDEN(403, "禁止访问"),
+    PASSWORD_ERROR(4002, "账号或密码错误"),
     VALIDATE_FILED(404,"参数校验失败");
 
 

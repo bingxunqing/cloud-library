@@ -30,6 +30,9 @@ public class Result<T> {
     public static <T> Result<T> success(T data, String message) {
         return new Result<>(ResultCode.SUCCESS.getCode(), message, data);
     }
+    public static <T> Result<T> Loginfailed(String message) {
+        return new Result<>(ResultCode.PASSWORD_ERROR.getCode(), message, null);
+    }
 
     public static <T> Result<T> failed(String message) {
         return new Result<>(ResultCode.ERROR.getCode(), message, null);

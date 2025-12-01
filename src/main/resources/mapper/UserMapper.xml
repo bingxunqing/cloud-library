@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="page.bingx.study2bean.dao.UserDao">
+    <select id="Login" resultType="page.bingx.study2bean.pojo.User" parameterType="Map">
+        SELECT
+            user_id,user_name,user_password,user_email,user_role
+        FROM user
+        WHERE   user_name=#{UserName} AND  user_password = #{UserPassword}
+    </select>
+</mapper>
